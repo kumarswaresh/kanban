@@ -1,0 +1,12 @@
+<mat-toolbar color="primary" class="kanban-toolbar">
+    <span>Kanban Board</span>
+    <span class="spacer"></span>
+    <kanban-search-bar [search]="config?.search" (searchChange)="searchChanged.emit($event)"></kanban-search-bar>
+</mat-toolbar>
+<div class="kanban-columns">
+    @for (column of columns; track column) {
+    <kanban-column [column]="column" [cards]="getRequestsForColumn(column.status)"
+        (cardDropped)="cardMoved.emit($event)">
+    </kanban-column>
+    }
+</div>
