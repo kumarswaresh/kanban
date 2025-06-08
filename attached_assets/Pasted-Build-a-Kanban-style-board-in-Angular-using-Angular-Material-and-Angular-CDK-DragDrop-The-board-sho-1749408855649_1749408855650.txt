@@ -1,0 +1,53 @@
+Build a Kanban-style board in Angular using Angular Material and Angular CDK DragDrop. The board should support the following requirements:
+
+1. **Sections/Columns**:
+   - `To Do`
+   - `Approved by One`
+   - `Approved by Second`
+   - `Rejected`
+
+2. **Cards**:
+   - Each card should represent a `Request` and contain the following:
+     - Request ID and Title
+     - Creator/Requester and Review Owner
+     - Created Date
+     - Status (automatically set by the column it's in)
+     - Total Approvals and Current Approval Stage
+     - View Comment (button)
+     - View Attachment (if present)
+     - CTA: “View Diff” → navigates to `/sync-diff/:requestId`
+     - (Optional) Tags or metadata indicators
+
+3. **Interactivity**:
+   - **Drag and Drop** functionality between columns to simulate workflow stage changes using Angular CDK.
+     - Drag can be disabled conditionally (e.g., request already approved or rejected).
+     - On drop, call a service to update the backend request status.
+   - On **clicking a card**, open a right-side panel or dialog with:
+     - Full request information
+     - History of comments in scrollable format
+     - Downloadable attachments
+     - Approval logs
+
+4. **Comment View**:
+   - Sticky comment viewer on cards and in the detail view.
+   - Ability to view without performing request on card click (non-blocking).
+
+5. **Styling**:
+   - Use Angular Material Cards with custom coloring per status
+     - To Do: Grey
+     - Approved by One: Blue
+     - Approved by Second: Green
+     - Rejected: Red
+   - Cards should resize responsively and stack within their columns.
+
+6. **Architecture**:
+   - Use Angular Material modules: `MatCard`, `MatDialog`, `MatTabs`, `MatIcon`, `MatTooltip`, `MatSnackBar`
+   - Use Angular CDK: `DragDropModule`
+   - Use a shared service to sync drag/drop updates and detail fetch
+   - Route `/sync-diff/:id` to open the diff comparison view
+
+7. **Extra Considerations**:
+   - Allow optional disabling of drag/drop via `canDrag: boolean`
+   - Emit events on column changes
+   - Sync with real backend via REST API on drop or approve/reject actions
+ add search ,  on all cards , make it jira like 
