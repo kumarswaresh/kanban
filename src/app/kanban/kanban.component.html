@@ -1,0 +1,173 @@
+<div class="kanban-controls">
+    <div class="left-controls">
+        <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search cards...</mat-label>
+            <input matInput [(ngModel)]="config.search" (ngModelChange)="onSearchChanged($event)"
+                placeholder="Search by policy name, creator, or tags">
+            <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Priority Filter</mat-label>
+            <mat-select [(ngModel)]="config.priorityFilter" multiple (selectionChange)="onFilterChanged()">
+                <mat-option value="Critical">Critical</mat-option>
+                <mat-option value="High">High</mat-option>
+                <mat-option value="Medium">Medium</mat-option>
+                <mat-option value="Low">Low</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="sort-field">
+            <mat-label>Sort By</mat-label>
+            <mat-select [(ngModel)]="config.sortBy" (selectionChange)="onSortChanged()">
+                <mat-option value="newest">Newest First</mat-option>
+                <mat-option value="oldest">Oldest First</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="toggle-controls">
+        <button mat-stroked-button [color]="config.showPriority ? 'primary' : ''"
+            (click)="config.showPriority = !config.showPriority">
+            Priority
+        </button>
+        <button mat-stroked-button [color]="config.showTags ? 'primary' : ''"
+            (click)="config.showTags = !config.showTags">
+            Tags
+        </button>
+        <button mat-stroked-button [color]="config.showAssignee ? 'primary' : ''"
+            (click)="config.showAssignee = !config.showAssignee">
+            Assignee
+        </button>
+        <button mat-stroked-button [color]="config.allowDragDrop ? 'primary' : ''"
+            (click)="config.allowDragDrop = !config.allowDragDrop">
+            Drag & Drop
+        </button>
+    </div>
+</div>
+
+<div class="kanban-board">
+    <div class="kanban-column" *ngFor="let column of columns" [style.background-color]="column.color">
+
+        <div class="column-header">
+            <h3>{{ column.title }}</h3>
+            <mat-chip-listbox>
+                <mat-chip [matBadgeHidden]="getRequestsByStatus(column.status).length === 0"
+                    [matBadge]="getRequestsByStatus(column.status).length" matBadgeColor="primary">
+                    {{ getRequestsByStatus(column.status).length }}
+                </mat-chip>
+            </mat-chip-listbox>
+        </div>
+
+        <div cdkDropList [cdkDropListData]="getRequestsByStatus(column.status)"
+            [cdkDropListConnectedTo]="getColumnConnectedLists()" (cdkDropListDropped)="drop($event)"
+            class="column-content" [id]="column.status">
+
+            <mat-card *ngFor="let request of getRequestsByStatus(column.status)" cdkDrag
+                [cdkDragDisabled]="!request.canDrag || !config.allowDragDrop" class="kanban-card"
+                [class.dragging-disabled]="!request.canDrag || !config.allowDragDrop" (click)="onCardClicked(request)"
+                matTooltip="Click to view details">
+
+                <!-- Card Header -->
+                <mat-card-header>
+                    <mat-card-title class="card-title">
+                        <span>{{ request.policyName }}</span>
+                        <mat-icon *ngIf="config.showPriority && request.priority"
+                            [style.color]="getPriorityColor(request.priority)"
+                            [matTooltip]="request.priority + ' Priority'">
+                            {{ getPriorityIcon(request.priority) }}
+                        </mat-icon>
+                    </mat-card-title>
+                    <mat-card-subtitle>
+                        <div class="request-ids">
+                            <span>Request: {{ request.requestId }}</span>
+                            <span>Policy: {{ request.policyId }}</span>
+                        </div>
+                    </mat-card-subtitle>
+                </mat-card-header>
+
+                <!-- Card Content -->
+                <mat-card-content>
+                    <p class="card-description">
+                        {{ request.policyDescription }}
+                    </p>
+
+                    <!-- Tags -->
+                    <div *ngIf="config.showTags && request.tags && request.tags.length > 0" class="card-tags">
+                        <mat-chip-listbox>
+                            <mat-chip *ngFor="let tag of request.tags" color="accent" selected>
+                                {{ tag }}
+                            </mat-chip>
+                        </mat-chip-listbox>
+                    </div>
+
+                    <!-- Policy Details -->
+                    <div class="policy-details">
+                        <div class="detail-item">
+                            <mat-icon>rule</mat-icon>
+                            <span>Total Rules: {{ request.totalRules }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <mat-icon>sync</mat-icon>
+                            <span>Sync Request: {{ request.syncRequestDateTime | date:'medium' }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <mat-icon>business</mat-icon>
+                            <span>Current: {{ request.currentTenant }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <mat-icon>arrow_forward</mat-icon>
+                            <span>Target: {{ request.targetTenant }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Assignee Info -->
+                    <div *ngIf="config.showAssignee" class="assignee-info">
+                        <div class="assignee-item">
+                            <mat-icon>person</mat-icon>
+                            <span>Owner: {{ request.owner }}</span>
+                        </div>
+                        <div class="assignee-item">
+                            <mat-icon>person_outline</mat-icon>
+                            <span>Reviewer: {{ request.reviewer }}</span>
+                        </div>
+                        <div class="assignee-item">
+                            <mat-icon>create</mat-icon>
+                            <span>Created by: {{ request.createdBy }}</span>
+                        </div>
+                        <div class="assignee-item">
+                            <mat-icon>event</mat-icon>
+                            <span>Created: {{ request.createdDate | date:'mediumDate' }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Sync Requester Info -->
+                    <div class="sync-requester-info">
+                        <div class="detail-item">
+                            <mat-icon>person_add</mat-icon>
+                            <span>Sync Requester: {{ request.syncRequester.name }}</span>
+                        </div>
+                        <div class="detail-item comment">
+                            <mat-icon>comment</mat-icon>
+                            <span>{{ request.syncRequester.comments }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Card Actions -->
+                    <mat-card-actions>
+                        <button mat-button color="primary" (click)="onCardClicked(request, 'details')">
+                            <mat-icon>visibility</mat-icon>
+                            View Details
+                        </button>
+                        <button mat-button class="comment-button"
+                            (click)="onCardClicked(request, 'comments'); $event.stopPropagation()">
+                            <span class="comment-count">{{request.comments.length}}</span>
+                            <mat-icon>chat</mat-icon>
+                            View Comments
+                        </button>
+                    </mat-card-actions>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+</div>

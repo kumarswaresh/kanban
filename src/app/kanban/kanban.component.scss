@@ -1,0 +1,457 @@
+.kanban-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 0 16px;
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  .search-field {
+    width: 300px;
+    margin-left: 16px;
+
+    ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    ::ng-deep .mat-form-field-label {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    ::ng-deep .mat-input-element {
+      color: white;
+    }
+
+    ::ng-deep .mat-icon {
+      color: rgba(255, 255, 255, 0.7);
+    }
+  }
+}
+
+.kanban-controls {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  .left-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+  }
+
+  .search-field {
+    width: 300px;
+
+    ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+      background-color: white;
+    }
+  }
+
+  .filter-field {
+    width: 200px;
+
+    ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+      background-color: white;
+    }
+
+    ::ng-deep .mat-select-panel {
+      .mat-option {
+        .mat-pseudo-checkbox {
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+
+  .sort-field {
+    width: 150px;
+
+    ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+      background-color: white;
+    }
+  }
+
+  .toggle-controls {
+    display: flex;
+    gap: 8px;
+
+    button {
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      &[color="primary"] {
+        background-color: rgba(25, 118, 210, 0.1);
+      }
+    }
+  }
+}
+
+.kanban-board {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  min-height: calc(100vh - 180px);
+  overflow-x: auto;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+
+  .kanban-column {
+    flex: 1;
+    min-width: 300px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .column-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+
+      h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #333;
+      }
+
+      mat-chip {
+        background-color: rgba(25, 118, 210, 0.1);
+        color: #1976d2;
+        font-weight: 500;
+      }
+    }
+
+    .column-content {
+      min-height: 100px;
+      padding: 8px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+
+      &.cdk-drop-list-dragging {
+        background-color: rgba(25, 118, 210, 0.05);
+      }
+    }
+  }
+}
+
+.kanban-card {
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+  background-color: #ffffff;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-left-color: #1976d2;
+  }
+
+  &.dragging-disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    color: #333;
+    font-weight: 500;
+  }
+
+  .card-description {
+    margin: 8px 0;
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.4;
+  }
+
+  .card-tags {
+    margin: 8px 0;
+
+    mat-chip {
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  .request-ids {
+    display: flex;
+    gap: 12px;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 4px;
+
+    span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+
+  .policy-details {
+    margin: 12px 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.02);
+    border-radius: 4px;
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #666;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: #1976d2;
+      }
+
+      &.comment {
+        grid-column: 1 / -1;
+        background-color: rgba(25, 118, 210, 0.05);
+        padding: 8px;
+        border-radius: 4px;
+        margin-top: 4px;
+      }
+    }
+  }
+
+  .sync-requester-info {
+    margin: 12px 0;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.02);
+    border-radius: 4px;
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #666;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: #1976d2;
+      }
+
+      &.comment {
+        margin-top: 8px;
+        padding: 8px;
+        background-color: rgba(25, 118, 210, 0.05);
+        border-radius: 4px;
+        font-style: italic;
+      }
+    }
+  }
+
+  .assignee-info {
+    margin: 12px 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.02);
+    border-radius: 4px;
+
+    .assignee-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #666;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: #1976d2;
+      }
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: #1976d2;
+      }
+    }
+  }
+
+  mat-card-actions {
+    padding: 8px 16px;
+    margin: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+
+    button {
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+
+      mat-icon {
+        margin: 0;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        line-height: 18px;
+      }
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+
+      &[mat-icon-button] {
+        color: #666;
+
+        &:hover {
+          color: #1976d2;
+          background-color: rgba(25, 118, 210, 0.1);
+        }
+      }
+    }
+  }
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transform: rotate(2deg);
+  background-color: #ffffff;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+  border: 2px dashed #1976d2;
+  background-color: rgba(25, 118, 210, 0.05);
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.column-content.cdk-drop-list-dragging .kanban-card:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.comment-button {
+  color: #666;
+  background-color: #f5f5f5;
+  margin-left: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  .comment-count {
+    background: #e0e0e0;
+    color: #616161;
+    font-size: 11px;
+    font-weight: 500;
+    min-width: 18px;
+    height: 18px;
+    line-height: 18px;
+    border-radius: 4px;
+    padding: 0 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  mat-icon {
+    margin: 0;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+  }
+
+  &:hover {
+    background-color: #eeeeee;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .kanban-header {
+    .search-field {
+      width: 200px;
+    }
+  }
+
+  .kanban-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+
+    .toggle-controls {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  }
+
+  .kanban-board {
+    flex-direction: column;
+    padding: 12px;
+
+    .kanban-column {
+      min-width: unset;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .kanban-header {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+
+    .search-field {
+      width: 100%;
+      margin-left: 0;
+    }
+  }
+
+  .kanban-card {
+    .card-tags mat-chip-list {
+      gap: 2px;
+    }
+
+    .assignee-info {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+}

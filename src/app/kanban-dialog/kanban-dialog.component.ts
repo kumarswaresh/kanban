@@ -1,50 +1,31 @@
-
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatDialogModule,
+} from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatChipsModule } from '@angular/material/chips';
+import { MatOptionModule } from '@angular/material/core';
+import {
+  MatChipsModule,
+  MatChipGrid,
+  MatChipListbox,
+} from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatListModule } from '@angular/material/list';
-
-interface Comment {
-  author: string;
-  body: string;
-  date: Date;
-}
-
-interface Attachment {
-  name: string;
-  url: string;
-}
-
-interface Request {
-  id: number;
-  title: string;
-  creator: string;
-  reviewOwner: string;
-  createdDate: Date;
-  status: string;
-  totalApprovals: number;
-  currentStage: number;
-  canDrag: boolean;
-  comments: Comment[];
-  approvalLogs: string[];
-  attachment: Attachment | null;
-  priority?: 'Low' | 'Medium' | 'High' | 'Critical';
-  tags?: string[];
-  description?: string;
-}
+import { MatBadgeModule } from '@angular/material/badge';
+import { Comment, Attachment, Request } from '../models/kanban.model';
 
 @Component({
-  selector: 'app-card-detail-dialog',
+  selector: 'app-kanban-dialog',
   standalone: true,
   imports: [
     CommonModule,
@@ -55,16 +36,19 @@ interface Request {
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatOptionModule,
     MatChipsModule,
     MatCardModule,
     MatDividerModule,
     MatTabsModule,
-    MatListModule
+    MatListModule,
+    MatBadgeModule,
   ],
-  templateUrl: './card-detail-dialog.component.html',
-  styleUrl: './card-detail-dialog.component.scss'
+  templateUrl: './kanban-dialog.component.html',
+  styleUrl: './kanban-dialog.component.scss',
 })
-export class CardDetailDialogComponent implements OnInit {
+export class KanbanDialogComponent implements OnInit {
+  @ViewChild('chipList') chipList!: MatChipGrid;
   request: Request;
   newComment: string = '';
   isEditing: boolean = false;
@@ -73,18 +57,18 @@ export class CardDetailDialogComponent implements OnInit {
     { value: 'ToDo', label: 'To Do' },
     { value: 'ApprovedByOne', label: 'Approved by One' },
     { value: 'ApprovedBySecond', label: 'Approved by Second' },
-    { value: 'Rejected', label: 'Rejected' }
+    { value: 'Rejected', label: 'Rejected' },
   ];
 
   priorityOptions = [
     { value: 'Low', label: 'Low', color: '#388e3c' },
     { value: 'Medium', label: 'Medium', color: '#1976d2' },
     { value: 'High', label: 'High', color: '#f57c00' },
-    { value: 'Critical', label: 'Critical', color: '#d32f2f' }
+    { value: 'Critical', label: 'Critical', color: '#d32f2f' },
   ];
 
   constructor(
-    public dialogRef: MatDialogRef<CardDetailDialogComponent>,
+    public dialogRef: MatDialogRef<KanbanDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { request: Request }
   ) {
     this.request = { ...data.request };
@@ -109,7 +93,7 @@ export class CardDetailDialogComponent implements OnInit {
       this.request.comments.push({
         author: 'Current User', // In a real app, this would be the logged-in user
         body: this.newComment.trim(),
-        date: new Date()
+        date: new Date(),
       });
       this.newComment = '';
     }
@@ -124,7 +108,9 @@ export class CardDetailDialogComponent implements OnInit {
   }
 
   getPriorityColor(priority?: string): string {
-    const priorityOption = this.priorityOptions.find(p => p.value === priority);
+    const priorityOption = this.priorityOptions.find(
+      (p) => p.value === priority
+    );
     return priorityOption?.color || '#757575';
   }
 
@@ -156,8 +142,10 @@ export class CardDetailDialogComponent implements OnInit {
   approveRequest() {
     if (this.request.currentStage < this.request.totalApprovals) {
       this.request.currentStage++;
-      this.request.approvalLogs.push(`Approved by Current User at stage ${this.request.currentStage}`);
-      
+      this.request.approvalLogs.push(
+        `Approved by Current User at stage ${this.request.currentStage}`
+      );
+
       if (this.request.currentStage === 1) {
         this.request.status = 'ApprovedByOne';
       } else if (this.request.currentStage === this.request.totalApprovals) {
