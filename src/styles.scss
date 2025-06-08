@@ -1,1 +1,108 @@
-/* You can add global styles to this file, and also import other style files */
+
+@import '@angular/material/theming';
+
+@include mat-core();
+
+// Define custom theme
+$primary-palette: mat-palette($mat-blue, 700);
+$accent-palette: mat-palette($mat-orange, 500);
+$warn-palette: mat-palette($mat-red);
+
+$theme: mat-light-theme((
+  color: (
+    primary: $primary-palette,
+    accent: $accent-palette,
+    warn: $warn-palette,
+  )
+));
+
+@include angular-material-theme($theme);
+
+// Global Styles
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+  background-color: #fafafa;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+// Custom scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+// Material Design enhancements
+.mat-card {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+  transition: box-shadow 0.3s ease !important;
+}
+
+.mat-button, .mat-raised-button, .mat-stroked-button {
+  font-weight: 500 !important;
+  letter-spacing: 0.5px !important;
+}
+
+.mat-form-field {
+  font-size: 14px !important;
+}
+
+// Utility classes
+.full-width {
+  width: 100% !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.margin-bottom-16 {
+  margin-bottom: 16px !important;
+}
+
+.margin-top-16 {
+  margin-top: 16px !important;
+}
+
+// Animation classes
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}

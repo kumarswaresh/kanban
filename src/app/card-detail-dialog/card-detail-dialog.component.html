@@ -1,0 +1,231 @@
+
+<div class="dialog-header">
+  <h2 mat-dialog-title>
+    <mat-icon>assignment</mat-icon>
+    {{ request.title }}
+    <span class="request-id">#{{ request.id }}</span>
+  </h2>
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content class="dialog-content">
+  <mat-tab-group animationDuration="300ms">
+    
+    <!-- Details Tab -->
+    <mat-tab label="Details">
+      <div class="tab-content">
+        <div class="details-section">
+          <div class="field-group">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Title</mat-label>
+              <input matInput [(ngModel)]="request.title" [readonly]="!isEditing">
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Description</mat-label>
+              <textarea matInput 
+                        [(ngModel)]="request.description" 
+                        [readonly]="!isEditing"
+                        rows="4"
+                        placeholder="Enter description..."></textarea>
+            </mat-form-field>
+          </div>
+
+          <div class="field-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Status</mat-label>
+              <mat-select [(ngModel)]="request.status" [disabled]="!isEditing">
+                <mat-option *ngFor="let status of statusOptions" [value]="status.value">
+                  {{ status.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Priority</mat-label>
+              <mat-select [(ngModel)]="request.priority" [disabled]="!isEditing">
+                <mat-option *ngFor="let priority of priorityOptions" [value]="priority.value">
+                  <span [style.color]="priority.color">{{ priority.label }}</span>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="field-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Creator</mat-label>
+              <input matInput [value]="request.creator" readonly>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Review Owner</mat-label>
+              <input matInput [(ngModel)]="request.reviewOwner" [readonly]="!isEditing">
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Tags</label>
+            <mat-chip-list>
+              <mat-chip *ngFor="let tag of request.tags" 
+                        [removable]="isEditing"
+                        (removed)="removeTag(tag)">
+                {{ tag }}
+                <mat-icon matChipRemove *ngIf="isEditing">cancel</mat-icon>
+              </mat-chip>
+              <input *ngIf="isEditing"
+                     placeholder="Add tag..."
+                     [matChipInputFor]="chipList"
+                     (matChipInputTokenEnd)="addTag($event)"
+                     #chipInput>
+            </mat-chip-list>
+          </div>
+
+          <div class="progress-section">
+            <h4>Approval Progress</h4>
+            <div class="progress-bar">
+              <div class="progress-fill" 
+                   [style.width.%]="(request.currentStage / request.totalApprovals) * 100">
+              </div>
+            </div>
+            <p>Stage {{ request.currentStage }} of {{ request.totalApprovals }}</p>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Comments Tab -->
+    <mat-tab label="Comments" [matBadgeHidden]="request.comments.length === 0" [matBadge]="request.comments.length">
+      <div class="tab-content">
+        <div class="comments-section">
+          <div class="add-comment">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Add a comment</mat-label>
+              <textarea matInput 
+                        [(ngModel)]="newComment" 
+                        rows="3"
+                        placeholder="Write your comment here..."></textarea>
+            </mat-form-field>
+            <button mat-raised-button 
+                    color="primary" 
+                    (click)="addComment()"
+                    [disabled]="!newComment.trim()">
+              Add Comment
+            </button>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <div class="comments-list" *ngIf="request.comments.length > 0">
+            <mat-card *ngFor="let comment of request.comments; let i = index" class="comment-card">
+              <mat-card-header>
+                <mat-icon mat-card-avatar>person</mat-icon>
+                <mat-card-title>{{ comment.author }}</mat-card-title>
+                <mat-card-subtitle>{{ comment.date | date:'medium' }}</mat-card-subtitle>
+                <button mat-icon-button 
+                        color="warn" 
+                        (click)="deleteComment(i)"
+                        class="delete-comment">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </mat-card-header>
+              <mat-card-content>
+                <p>{{ comment.body }}</p>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <div *ngIf="request.comments.length === 0" class="no-comments">
+            <mat-icon>comment</mat-icon>
+            <p>No comments yet. Be the first to add one!</p>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Activity Tab -->
+    <mat-tab label="Activity">
+      <div class="tab-content">
+        <div class="activity-section">
+          <h4>Approval History</h4>
+          <mat-list>
+            <mat-list-item *ngFor="let log of request.approvalLogs">
+              <mat-icon matListIcon>history</mat-icon>
+              <p matLine>{{ log }}</p>
+              <p matLine class="activity-date">{{ request.createdDate | date:'medium' }}</p>
+            </mat-list-item>
+          </mat-list>
+
+          <mat-divider></mat-divider>
+
+          <div class="attachment-section" *ngIf="request.attachment">
+            <h4>Attachments</h4>
+            <mat-card class="attachment-card">
+              <mat-card-content>
+                <div class="attachment-item">
+                  <mat-icon>attachment</mat-icon>
+                  <span>{{ request.attachment.name }}</span>
+                  <button mat-button color="primary">Download</button>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <div class="action-buttons">
+    <div class="workflow-buttons" *ngIf="!isEditing">
+      <button mat-raised-button 
+              color="accent" 
+              (click)="approveRequest()"
+              *ngIf="request.status !== 'ApprovedBySecond' && request.status !== 'Rejected'">
+        <mat-icon>thumb_up</mat-icon>
+        Approve
+      </button>
+      
+      <button mat-raised-button 
+              color="warn" 
+              (click)="rejectRequest()"
+              *ngIf="request.status !== 'Rejected'">
+        <mat-icon>thumb_down</mat-icon>
+        Reject
+      </button>
+      
+      <button mat-raised-button 
+              color="primary" 
+              (click)="reopenRequest()"
+              *ngIf="request.status === 'Rejected'">
+        <mat-icon>refresh</mat-icon>
+        Reopen
+      </button>
+    </div>
+
+    <div class="edit-buttons">
+      <button mat-button (click)="toggleEdit()" [color]="isEditing ? 'warn' : 'primary'">
+        <mat-icon>{{ isEditing ? 'cancel' : 'edit' }}</mat-icon>
+        {{ isEditing ? 'Cancel' : 'Edit' }}
+      </button>
+      
+      <button mat-raised-button 
+              color="primary" 
+              (click)="onSave()"
+              *ngIf="isEditing">
+        <mat-icon>save</mat-icon>
+        Save Changes
+      </button>
+      
+      <button mat-button 
+              (click)="onCancel()"
+              *ngIf="!isEditing">
+        Close
+      </button>
+    </div>
+  </div>
+</mat-dialog-actions>

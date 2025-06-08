@@ -1,1 +1,154 @@
-<h1>Hello World</h1>
+
+<mat-toolbar color="primary" class="kanban-header">
+  <span>{{ title }}</span>
+  <span class="spacer"></span>
+  
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Search cards...</mat-label>
+    <input matInput 
+           [(ngModel)]="config.search" 
+           (input)="onSearchChanged($event.target?.value || '')"
+           placeholder="Search by title, creator, or tags">
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+</mat-toolbar>
+
+<div class="kanban-controls">
+  <mat-form-field appearance="outline" class="control-field">
+    <mat-label>Board Settings</mat-label>
+    <mat-select>
+      <mat-option>View Options</mat-option>
+    </mat-select>
+  </mat-form-field>
+  
+  <div class="toggle-controls">
+    <button mat-stroked-button 
+            [color]="config.showPriority ? 'primary' : ''"
+            (click)="config.showPriority = !config.showPriority">
+      Priority
+    </button>
+    <button mat-stroked-button 
+            [color]="config.showTags ? 'primary' : ''"
+            (click)="config.showTags = !config.showTags">
+      Tags
+    </button>
+    <button mat-stroked-button 
+            [color]="config.showAssignee ? 'primary' : ''"
+            (click)="config.showAssignee = !config.showAssignee">
+      Assignee
+    </button>
+    <button mat-stroked-button 
+            [color]="config.allowDragDrop ? 'primary' : ''"
+            (click)="config.allowDragDrop = !config.allowDragDrop">
+      Drag & Drop
+    </button>
+  </div>
+</div>
+
+<div class="kanban-board">
+  <div class="kanban-column" 
+       *ngFor="let column of columns" 
+       [style.background-color]="column.color">
+    
+    <div class="column-header">
+      <h3>{{ column.title }}</h3>
+      <mat-chip-list>
+        <mat-chip [matBadgeHidden]="getRequestsByStatus(column.status).length === 0"
+                  [matBadge]="getRequestsByStatus(column.status).length"
+                  matBadgeColor="primary">
+          {{ getRequestsByStatus(column.status).length }}
+        </mat-chip>
+      </mat-chip-list>
+    </div>
+
+    <div cdkDropList
+         [cdkDropListData]="getRequestsByStatus(column.status)"
+         [cdkDropListConnectedTo]="getColumnConnectedLists()"
+         (cdkDropListDropped)="drop($event)"
+         class="column-content"
+         [id]="column.status">
+      
+      <mat-card *ngFor="let request of getRequestsByStatus(column.status)" 
+                cdkDrag
+                [cdkDragDisabled]="!request.canDrag || !config.allowDragDrop"
+                class="kanban-card"
+                [class.dragging-disabled]="!request.canDrag || !config.allowDragDrop"
+                (click)="onCardClicked(request)"
+                matTooltip="Click to view details">
+        
+        <!-- Card Header -->
+        <mat-card-header>
+          <mat-card-title class="card-title">
+            <span>{{ request.title }}</span>
+            <mat-icon *ngIf="config.showPriority && request.priority" 
+                      [style.color]="getPriorityColor(request.priority)"
+                      [matTooltip]="request.priority + ' Priority'">
+              {{ getPriorityIcon(request.priority) }}
+            </mat-icon>
+          </mat-card-title>
+          <mat-card-subtitle>#{{ request.id }}</mat-card-subtitle>
+        </mat-card-header>
+
+        <!-- Card Content -->
+        <mat-card-content>
+          <p *ngIf="request.description" class="card-description">
+            {{ request.description }}
+          </p>
+          
+          <!-- Tags -->
+          <div *ngIf="config.showTags && request.tags && request.tags.length > 0" 
+               class="card-tags">
+            <mat-chip-list>
+              <mat-chip *ngFor="let tag of request.tags" 
+                        color="accent" 
+                        selected>
+                {{ tag }}
+              </mat-chip>
+            </mat-chip-list>
+          </div>
+
+          <!-- Assignee Info -->
+          <div *ngIf="config.showAssignee" class="assignee-info">
+            <div class="assignee-item">
+              <mat-icon>person</mat-icon>
+              <span>{{ request.creator }}</span>
+            </div>
+            <div class="assignee-item" *ngIf="request.reviewOwner !== request.creator">
+              <mat-icon>person_outline</mat-icon>
+              <span>{{ request.reviewOwner }}</span>
+            </div>
+          </div>
+
+          <!-- Progress Info -->
+          <div class="progress-info">
+            <span class="stage-info">
+              Stage {{ request.currentStage }}/{{ request.totalApprovals }}
+            </span>
+            <span class="date-info">
+              {{ request.createdDate | date:'shortDate' }}
+            </span>
+          </div>
+        </mat-card-content>
+
+        <!-- Card Actions -->
+        <mat-card-actions align="end">
+          <button mat-icon-button 
+                  *ngIf="request.attachment" 
+                  matTooltip="Has attachment">
+            <mat-icon>attachment</mat-icon>
+          </button>
+          <button mat-icon-button 
+                  [matBadge]="request.comments.length"
+                  matBadgeColor="accent"
+                  [matBadgeHidden]="request.comments.length === 0"
+                  matTooltip="Comments">
+            <mat-icon>comment</mat-icon>
+          </button>
+          <button mat-button color="primary" (click)="$event.stopPropagation(); onCardClicked(request)">
+            View Details
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</div>

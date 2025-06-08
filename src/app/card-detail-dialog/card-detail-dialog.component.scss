@@ -1,0 +1,237 @@
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0;
+  margin-bottom: 20px;
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    flex: 1;
+
+    .request-id {
+      color: #666;
+      font-size: 0.8em;
+      font-weight: normal;
+    }
+  }
+}
+
+.dialog-content {
+  max-height: 70vh;
+  overflow: hidden;
+  padding: 0 24px;
+}
+
+.tab-content {
+  padding: 20px 0;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.details-section {
+  .field-group {
+    margin-bottom: 20px;
+  }
+
+  .field-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+
+    mat-form-field {
+      flex: 1;
+    }
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  .field-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  mat-chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 40px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+
+    input {
+      border: none;
+      outline: none;
+      background: transparent;
+      margin-top: 4px;
+    }
+  }
+}
+
+.progress-section {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+
+  h4 {
+    margin: 0 0 16px 0;
+    color: #333;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4caf50, #8bc34a);
+      transition: width 0.3s ease;
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9em;
+    color: #666;
+  }
+}
+
+.comments-section {
+  .add-comment {
+    margin-bottom: 20px;
+
+    button {
+      margin-top: 12px;
+      width: 100%;
+    }
+  }
+
+  .comments-list {
+    margin-top: 20px;
+
+    .comment-card {
+      margin-bottom: 16px;
+      position: relative;
+
+      .delete-comment {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+      }
+
+      mat-card-content p {
+        white-space: pre-wrap;
+        line-height: 1.5;
+      }
+    }
+  }
+
+  .no-comments {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+  }
+}
+
+.activity-section {
+  h4 {
+    margin: 0 0 16px 0;
+    color: #333;
+  }
+
+  .activity-date {
+    font-size: 0.8em;
+    color: #888;
+  }
+
+  .attachment-section {
+    margin-top: 30px;
+
+    .attachment-card {
+      margin-top: 12px;
+
+      .attachment-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        mat-icon {
+          color: #666;
+        }
+
+        span {
+          flex: 1;
+        }
+      }
+    }
+  }
+}
+
+.dialog-actions {
+  padding: 16px 24px;
+  border-top: 1px solid #e0e0e0;
+  margin: 0;
+
+  .action-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 16px;
+
+    .workflow-buttons,
+    .edit-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 600px) {
+  .dialog-content {
+    padding: 0 16px;
+  }
+
+  .details-section .field-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .dialog-actions .action-buttons {
+    flex-direction: column;
+    gap: 12px;
+
+    .workflow-buttons,
+    .edit-buttons {
+      justify-content: center;
+    }
+  }
+}
