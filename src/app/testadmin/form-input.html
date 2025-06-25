@@ -1,0 +1,74 @@
+<div [ngSwitch]="inputTypeView">
+    <div class="relative" *ngSwitchCase="'textTypeView'">
+        @if (type === 'phone') {
+        <div class="relative">
+            <ng-container *ngTemplateOutlet="content"></ng-container>
+            <ng-container *ngTemplateOutlet="inputField"></ng-container>
+        </div>
+        } @else {
+        <ng-container *ngTemplateOutlet="inputField"></ng-container>
+        <ng-container *ngTemplateOutlet="content"></ng-container>
+        }
+    </div>
+
+    <div class="relative" *ngSwitchCase="'selectTypeView'">
+        <select nglxTextHoverSpeaker [formControlName]="formControlName" [compareWith]="compareWith"
+            [name]="formControlName" [id]="labelId || formControlName" [class]="classNames"
+            [attr.aria-label]="'Select ' + (labelId || formControlName)" [attr.aria-required]="true" role="combobox"
+            [attr.aria-expanded]="false">
+            <!-- For TimeZone -->
+            <ng-container *ngIf="formControlName === 'timeZone'">
+                <option value="Time Zone" selected disabled>Time Zone</option>
+                <option *ngFor="let timezone of dataForSelect" [ngValue]="timezone"
+                    [attr.aria-label]="timezone.name + ' ' + timezone.utcOffset">
+                    {{ timezone.name }} {{ timezone.utcOffset }}
+                </option>
+            </ng-container>
+
+            <!-- For State -->
+            <ng-container *ngIf="formControlName === 'state'">
+                <option value="" selected disabled>State</option>
+                <option *ngFor="let state of dataForSelect" [ngValue]="state[0]" [attr.aria-label]="state[1]">
+                    {{ state[1] }}
+                </option>
+            </ng-container>
+
+            <!-- For State -->
+            <ng-container *ngIf="formControlName === 'secretQuestion'">
+                <option *ngFor="let question of dataForSelect; let idx = index" [value]="idx">
+                    {{ question[0] }}
+                </option>
+            </ng-container>
+        </select>
+
+        <ng-container *ngTemplateOutlet="selectLabel"></ng-container>
+    </div>
+</div>
+
+<ng-template #inputField>
+    <input nglxTextHoverSpeaker [id]="labelId || formControlName" [class]="classNames" [type]="type"
+        [name]="formControlName" [placeholder]="label" [formControlName]="formControlName" [required]="required"
+        [attr.aria-required]="required ? true : null" role="textbox"
+        [ngStyle]="{ 'border-color': isError ? '#bd2b41' : '' }" [autocomplete]="autoComplete" />
+
+    <label [for]="labelId || formControlName" class="input-label">
+        {{ label }}
+    </label>
+
+    <span *ngIf="isError" nglxTextHoverSpeaker class="input-helper-invalid text-[#bd2b41]" role="alert">
+        {{ errorText }}
+    </span>
+</ng-template>
+
+<ng-template #selectLabel>
+    <label [for]="labelId || formControlName" [ngClass]="{
+        'dropdown-label-no-value': form === null,
+        'input-label': form !== null,
+      }">
+        {{ label }}
+    </label>
+</ng-template>
+
+<ng-template #content>
+    <ng-content />
+</ng-template>

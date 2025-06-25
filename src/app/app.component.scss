@@ -1,1 +1,145 @@
-/* App component styles are now empty as they have been moved to kanban component */
+.custom-notif-menu {
+  min-width: 400px !important;
+  max-width: 400px !important;
+  padding: 0 !important;
+}
+
+.tab-content {
+  max-height: 400px;
+  min-height: 180px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 8px 0 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #90a4ae;
+  font-size: 1.05rem;
+  font-weight: 500;
+  background: #f7fafd;
+  border-radius: 8px;
+  margin: 24px 0 0 0;
+  padding: 32px 0;
+  text-align: center;
+}
+
+.notif-card {
+  display: flex;
+  align-items: flex-start;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e3eaf2;
+  margin-bottom: 8px;
+  padding: 14px 12px;
+  cursor: pointer;
+  transition: background 0.18s, box-shadow 0.18s;
+  box-shadow: 0 1px 2px rgba(33, 150, 243, 0.04);
+
+  &:hover {
+    background: #f0f6fd;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
+    border-color: #bbdefb;
+  }
+}
+
+.notif-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e3eaf2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1976d2;
+  font-size: 22px;
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+
+.notif-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.notif-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 2px;
+}
+
+.notif-message {
+  font-size: 0.97rem;
+  color: #444;
+  font-weight: 400;
+  line-height: 1.5;
+  white-space: normal;
+}
+
+.policy-name {
+  font-weight: 600;
+  color: #1976d2;
+  margin: 0 2px;
+}
+
+.notif-date {
+  color: #bdbdbd;
+  font-size: 0.92rem;
+  margin-left: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+::ng-deep .custom-notif-menu.mat-mdc-menu-panel {
+  min-width: 400px;
+  max-width: 400px;
+  width: 400px;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+// Notification icon badge (top right)
+.notif-badge {
+  position: absolute;
+  top: 8px;
+  right: 0px;
+  background: #1976d2;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(25, 118, 210, 0.15);
+  z-index: 1;
+  pointer-events: none;
+}
+
+// Tab badge style
+.tab-badge {
+  background: #2196f3;
+  color: #fff;
+  font-size: 0.8rem;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+  vertical-align: middle;
+  box-shadow: 0 1px 4px rgba(33, 150, 243, 0.12);
+}

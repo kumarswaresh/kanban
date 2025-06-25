@@ -1,0 +1,108 @@
+<form [formGroup]="addressPhoneForm" [ngClass]="{
+    'border-base-content': !addressPhoneForm.disabled,
+    'border-2': !addressPhoneForm.disabled,
+  }"
+    class="bg-base-100 border-0.5 border-base-300 dark:border-base-100 relative w-full rounded-lg p-6 dark:bg-gray-800"
+    autocomplete="on" [nglxVerbose]="{
+    personDetails,
+  }">
+    <div class="flex h-11 items-center justify-between">
+        <h2 nglxTextHoverSpeaker class="text-base-content text-xl font-semibold dark:text-white">
+            Address and Phone Number
+        </h2>
+        <div class="@sm:flex hidden">
+            <app-form-controls [form]="addressPhoneForm" [initialFormData]="personDetails"
+                [onSubmitEvent]="handleAddressFormSubmit.bind(this)"
+                [accessibilityCaption]="' address and phone number changes'" />
+        </div>
+    </div>
+
+    <nglx-snackbar *ngIf="snackbar.status" [type]="snackbar.status" [autoHide]="7500" (outClose)="handleSnackbarClose()"
+        class="mb-7 mt-3">
+        <div class="flex gap-1">
+            <p nglxTextHoverSpeaker class="text-base-500">
+                {{ snackbar.msg }}
+            </p>
+        </div>
+    </nglx-snackbar>
+
+    <div class="mb-6 mt-6 w-full">
+        <app-form-input [formControlName]="'streetAddress'" [label]="'Street Address'"
+            [classNames]="'input peer w-full'" [type]="'text'" [inputTypeView]="'textTypeView'"
+            [isError]="getAddressPhoneFormError('streetAddress', 'required')"
+            [errorText]="'Street address is required.'"
+            [required]="getAddressPhoneFormError('streetAddress', 'required')" [autoComplete]="'street-address'" />
+    </div>
+    <div class="mb-6 mt-6 w-full">
+        <app-form-input [formControlName]="'streetAddressLine2'" [label]="'Street Address Line 2 (Optional)'"
+            [classNames]="'input peer w-full'" [type]="'text'" [inputTypeView]="'textTypeView'"
+            [autoComplete]="'address-line2'" />
+    </div>
+    <div class="@md:grid-cols-3 mb-6 grid grid-cols-1 gap-4">
+        <div class="w-full">
+            <app-form-input [formControlName]="'city'" [label]="'City'" [classNames]="'input peer w-full'"
+                [type]="'text'" [inputTypeView]="'textTypeView'"
+                [isError]="getAddressPhoneFormError('city', 'required')" [errorText]="'City name is required.'"
+                [required]="getAddressPhoneFormError('city', 'required')" [autoComplete]="'address-level2'" />
+        </div>
+        <div class="w-full">
+            <app-form-input [formControlName]="'state'" [label]="'State'" [classNames]="'dropdown peer w-full'"
+                [type]="'select'" [inputTypeView]="'selectTypeView'" [dataForSelect]="states"
+                [autoComplete]="'address-level1'" />
+        </div>
+        <div class="w-full">
+            <app-form-input [formControlName]="'zipCode'" [label]="'Zip Code'" [classNames]="'input peer w-full'"
+                [type]="'text'" [inputTypeView]="'textTypeView'" [isError]="
+          getAddressPhoneFormError('zipCode', 'required') ||
+          getAddressPhoneFormError('zipCode', 'pattern')
+        " [errorText]="
+          getAddressPhoneFormError('zipCode', 'required')
+            ? 'ZipCode is required.'
+            : 'Please enter a ZipCode format like 12345.'
+        " [required]="getAddressPhoneFormError('zipCode', 'required')" [autoComplete]="'postal-code'" />
+        </div>
+    </div>
+
+    <div class="@md:grid-cols-3 mb-6 grid grid-cols-1 gap-4">
+        <div class="w-full">
+            <app-form-input [formControlName]="'primary'" [label]="'Primary Phone'"
+                [classNames]="'input peer w-full !pl-16'" [type]="'phone'" [inputTypeView]="'textTypeView'"
+                [iconName]="'usa-flag'" [isError]="
+          getAddressPhoneFormError('primary', 'required') ||
+          getAddressPhoneFormError('primary', 'pattern')
+        " [errorText]="
+          getAddressPhoneFormError('primary', 'required')
+            ? 'Primary phone number is required.'
+            : 'Please enter a valid phone number format.'
+        " [required]="getAddressPhoneFormError('primary', 'required')" [autoComplete]="'tel'">
+                <div class="absolute inset-y-0 start-0 flex max-h-[3rem] items-center ps-3.5">
+                    <nglx-icons iconName="usa-flag" />
+                    <span class="text-base-500 pl-1 text-xs">+1</span>
+                </div>
+            </app-form-input>
+        </div>
+
+        <div class="w-full">
+            <app-form-input [formControlName]="'mobile'" [label]="'Mobile Phone'"
+                [classNames]="'input peer w-full !pl-16'" [type]="'phone'" [inputTypeView]="'textTypeView'"
+                [iconName]="'usa-flag'" [isError]="getAddressPhoneFormError('mobile', 'pattern')"
+                [errorText]="'Please enter a valid phone number format.'" [autoComplete]="'mobile tel'">
+                <div class="absolute inset-y-0 start-0 flex max-h-[3rem] items-center ps-3.5">
+                    <nglx-icons iconName="usa-flag" />
+                    <span class="text-base-500 pl-1 text-xs">+1</span>
+                </div>
+            </app-form-input>
+        </div>
+    </div>
+    <div class="text-base-500 font-normal leading-tight tracking-wide">
+        Your mobile phone number is required if you would like to opt-in to test
+        messaging and sms notifications.
+    </div>
+    <div class="@sm:hidden flex items-center justify-end">
+        <app-form-controls [form]="addressPhoneForm" [initialFormData]="personDetails"
+            [onSubmitEvent]="handleAddressFormSubmit.bind(this)" />
+    </div>
+</form>
+<div id="aria-announcement_address_form" aria-live="polite" class="sr-only">
+    {{ aria_announcement_message }}
+</div>

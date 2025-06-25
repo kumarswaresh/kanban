@@ -1,1 +1,76 @@
-<!-- App component template is now empty as content has been moved to kanban component -->
+<mat-toolbar color="primary">
+    <span>My App</span>
+    <span class="spacer"></span>
+    <button mat-icon-button [matMenuTriggerFor]="notifMenu" style="position: relative;">
+        <mat-icon>notifications</mat-icon>
+        <span *ngIf="totalUnread > 0" class="notif-badge">{{ totalUnread }}</span>
+    </button>
+</mat-toolbar>
+
+<mat-menu #notifMenu="matMenu" class="custom-notif-menu">
+
+    <mat-tab-group (click)="$event.stopPropagation()">
+        <!-- Requester Tab -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <span>
+                    Requester
+                    <span class="tab-badge" *ngIf="requesterNotifications.length">{{ requesterNotifications.length
+                        }}</span>
+                </span>
+            </ng-template>
+            <div class="tab-content">
+                <ng-container *ngIf="requesterNotifications?.length; else noRequester">
+                    <div class="notif-card" *ngFor="let n of requesterNotifications" (click)="open(n)">
+                        <div class="notif-avatar">
+                            <mat-icon>message</mat-icon>
+                        </div>
+                        <div class="notif-details">
+                            <div class="notif-message">
+                                Sync request raised by {{ n.user }} for policy
+                                <span class="policy-name">{{ n.policy }}</span>
+                            </div>
+                        </div>
+                        <div class="notif-date">{{ n.date }}</div>
+                    </div>
+                </ng-container>
+                <ng-template #noRequester>
+                    <p class="empty">No requester notifications at the moment.<br>You're all caught up!</p>
+                </ng-template>
+            </div>
+        </mat-tab>
+
+        <!-- Approver Tab -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <span>
+                    Approver
+                    <span class="tab-badge" *ngIf="approverNotifications.length">{{ approverNotifications.length
+                        }}</span>
+                </span>
+            </ng-template>
+            <div class="tab-content">
+                <ng-container *ngIf="approverNotifications?.length; else noApprover">
+                    <div class="notif-card" *ngFor="let n of approverNotifications" (click)="open(n)">
+                        <div class="notif-avatar">
+                            <mat-icon>message</mat-icon>
+                        </div>
+                        <div class="notif-details">
+                            <div class="notif-message">
+                                Sync request for policy
+                                <span class="policy-name">{{ n.policy }}</span>
+                                has been approved
+                            </div>
+                        </div>
+                        <div class="notif-date">{{ n.date }}</div>
+                    </div>
+                </ng-container>
+                <ng-template #noApprover>
+                    <p class="empty">No approver notifications at the moment.<br>You're all caught up!</p>
+                </ng-template>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</mat-menu>
+
+<app-kanban></app-kanban>
